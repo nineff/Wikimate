@@ -9,6 +9,8 @@ and [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- Require minimum PHP Verion 8.0
+- Added Namespace and adhere to PSR-4 autoloading Standard
 - Applied code formatting rules from [PSR-12](https://www.php-fig.org/psr/psr-12/) ([#142])
 - Resolved static analysis warnings reported by [PHPStan](https://phpstan.org/) &
   [PHPMD](https://phpmd.org/) ([#143])

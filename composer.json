@@ -20,11 +20,12 @@
         }
     ],
     "autoload": {
-        "classmap": [
-            "Wikimate.php"
-        ]
+        "psr-4": {
+            "Hamstar\\Wikimate\\": "src"
+        }
     },
     "require": {
-        "rmccue/requests": "^2.0"
+        "rmccue/requests": "^2.0",
+        "php": ">=8.0"
     }
 }
