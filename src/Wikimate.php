@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Hamstar\Wikimate;
 
+use WpOrg\Requests\Session;
+
 /**
  * Wikimate is a wrapper for the MediaWiki API that aims to be very easy to use.
  *
@@ -102,7 +104,7 @@ class Wikimate
      *
      * @see https://requests.ryanmccue.info/
      */
-    protected WpOrg\Requests\Session $session;
+    protected Session $session;
 
     /**
      * User agent string for Requests_Session.
@@ -177,7 +179,7 @@ class Wikimate
     {
         $this->useragent = 'Wikimate/'.self::VERSION.' (https://github.com/hamstar/Wikimate)';
 
-        $this->session = new WpOrg\Requests\Session($this->api, $this->headers, $this->data, $this->options);
+        $this->session = new Session($this->api, $this->headers, $this->data, $this->options);
         $this->session->useragent = $this->useragent;
     }
 
@@ -796,6 +798,6 @@ class Wikimate
      * @return bool
      */
     public function isLoggedIn():bool{
-        return $this->isLoggedIn();
+        return $this->loggedIn;
     }
 }
