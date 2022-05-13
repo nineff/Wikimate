@@ -275,9 +275,10 @@ class Wikimate
         }
 
         // Check if we got a JSON result
-        $result = json_decode($response->body, true);
-        if (null === $result) {
-            throw new WikimateException("The API did not return the $action JSON response");
+        try {
+            $result = json_decode($response->body, true, flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new WikimateException("The API did not return a valid $action JSON response; {$e->getMessage()} was thrown");
         }
 
         if ($this->debugMode) {
