@@ -1,3 +1,4 @@
-wikimate_cookie.txt
-nbproject/private
+nbproject
 vendor
+/.php-cs-fixer.cache
+/composer.lock
