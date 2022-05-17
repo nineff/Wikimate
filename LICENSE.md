@@ -1,6 +1,7 @@
 # MIT License
 
-Copyright (c) 2010-2021 Robert McLeod, Frans P. de Vries, and
+Copyright (c) 2010-2021 Robert McLeod, Frans P. de Vries,
+Copyright (c) 2022 Nikolai Neff, and
 [contributors](https://github.com/hamstar/Wikimate/graphs/contributors)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

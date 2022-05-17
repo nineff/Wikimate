@@ -5,16 +5,23 @@ This page lists the changes that were done in each version of Wikimate.
 Since v0.10.0 this project adheres to [Semantic Versioning](http://semver.org/)
 and [Keep a Changelog](http://keepachangelog.com/).
 
-## Upcoming version
+## Version 2.0.0 - 2022-MM-DD
 
 ### Changed
 
+- **Breaking:** Require minimum PHP Verion 8.0
+- **Breaking:** Added Namespace and adhere to PSR-4 autoloading Standard
 - Applied code formatting rules from [PSR-12](https://www.php-fig.org/psr/psr-12/) ([#142])
 - Resolved static analysis warnings reported by [PHPStan](https://phpstan.org/) &
   [PHPMD](https://phpmd.org/) ([#143])
 - Clarified error response for edits denied by a CAPTCHA ([#145])
 - Activated default markdownlint rules ([#146])
 - Updated dependency on rmccue/requests to Version 2.x (fixes PHP 8.1 deprecation warnings) ([#147])
+
+### Removed
+
+- Removed Wikipage::Destroy()
+- Removed Wikimate::setDebugMode and Wikimate::debugRequestsConfig()
 
 ## Version 1.0.0 - 2021-09-05
 
