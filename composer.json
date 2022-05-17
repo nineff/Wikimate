@@ -1,5 +1,5 @@
 {
-    "name": "hamstar/wikimate",
+    "name": "nns/wikimate",
     "type": "library",
     "description": "Wikimate is a wrapper for the MediaWiki API that aims to be very easy to use.",
     "license": "MIT",
@@ -15,17 +15,24 @@
             "homepage": "https://github.com/xymph"
         },
         {
-            "name"      : "Contributors",
-            "homepage"  : "https://github.com/hamstar/Wikimate/graphs/contributors"
+            "name": "Nikolai Neff",
+            "homepage": "https://github.com/nineff"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://github.com/hamstar/Wikimate/graphs/contributors"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Hamstar\\Wikimate\\": "src"
+            "NNS\\Wikimate\\": "src"
         }
     },
     "require": {
         "rmccue/requests": "^2.0",
         "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit":"^9.5"
     }
 }

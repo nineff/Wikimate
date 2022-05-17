@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hamstar\Wikimate;
+namespace NNS\Wikimate;
 
 /**
  * Models a wiki file that can have its properties retrieved and
@@ -23,7 +23,7 @@ class WikiFile
     /**
      * Wikimate object for API requests.
      */
-    protected ?Wikimate $wikimate = null;
+    protected Wikimate $wikimate;
 
     /**
      * Whether the file exists.
@@ -73,20 +73,6 @@ class WikiFile
     }
 
     /**
-     * Forgets all object properties.
-     */
-    public function __destruct()
-    {
-        $this->filename = null;
-        $this->wikimate = null;
-        $this->exists = false;
-        $this->invalid = false;
-        $this->error = null;
-        $this->info = null;
-        $this->history = null;
-    }
-
-    /**
      * Returns the file existence status.
      *
      * @return bool True if file exists
@@ -107,7 +93,7 @@ class WikiFile
     /**
      * Returns the latest error if there is one.
      *
-     * @return mixed The error array, or null if no error
+     * @return ?array The error array, or null if no error
      */
     public function getError(): ?array
     {
@@ -117,9 +103,9 @@ class WikiFile
     /**
      * Returns the name of this file.
      *
-     * @return string The name of this file
+     * @return ?string The name of this file
      */
-    public function getFilename(): string
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
@@ -131,7 +117,7 @@ class WikiFile
      * @param bool  $refresh True to query the wiki API again
      * @param array $history An optional array of revision history parameters
      *
-     * @return mixed The info of the file (array), or null if error
+     * @return ?array The info of the file (array), or null if error
      */
     public function getInfo(bool $refresh = false, ?array $history = null): ?array
     {
@@ -140,9 +126,8 @@ class WikiFile
             $data = [
                 'titles' => 'File:'.$this->filename,
                 'prop' => 'info|imageinfo',
-                'iiprop' => 'bitdepth|canonicaltitle|comment|parsedcomment|'
-                          .'commonmetadata|metadata|extmetadata|mediatype|'
-                          .'mime|thumbmime|sha1|size|timestamp|url|user|userid',
+                'iiprop' => 'badfile|bitdepth|canonicaltitle|comment|commonmetadata|dimensions|extmetadata|mediatype|'.
+                            'metadata|mime|parsedcomment|sha1|size|thumbmime|timestamp|uploadwarning|url|user|userid',
             ];
             // Add optional history parameters
             if (is_array($history)) {
@@ -196,7 +181,7 @@ class WikiFile
      *
      * @param string|int|null $revision The index or timestamp of the revision (optional)
      *
-     * @return mixed The anonymous flag of this file (boolean),
+     * @return ?bool The anonymous flag of this file (boolean),
      *               or null if revision not found
      */
     public function getAnon(string|int|null $revision = null): ?bool
@@ -231,7 +216,7 @@ class WikiFile
         // Without revision, use current info
         if (!isset($revision)) {
             // Check for dimensions
-            if ($this->info['height'] > 0) {
+            if (isset($this->info['height'], $this->info['width']) && $this->info['height'] > 0) {
                 return $this->info['width'] / $this->info['height'];
             } else {
                 return 0;
@@ -730,7 +715,7 @@ class WikiFile
      * @param ?string $startts The start timestamp of the listing (optional)
      * @param ?string $endts   The end timestamp of the listing (optional)
      *
-     * @return mixed The array of selected file revisions, or null if error
+     * @return ?array The array of selected file revisions, or null if error
      */
     public function getHistory(bool $refresh = false, ?int $limit = null, ?string $startts = null, ?string $endts = null): ?array
     {
@@ -781,10 +766,17 @@ class WikiFile
             }
             // Search revision by timestamp
         } else {
-            foreach ($this->history as $history) {
-                if ($history['timestamp'] == $revision) {
-                    return $history;
+            if (!is_null($this->history)) {
+                foreach ($this->history as $history) {
+                    if ($history['timestamp'] == $revision) {
+                        return $history;
+                    }
                 }
+            } else {
+                $this->error = [];
+                $this->error['file'] = "History for Revision '$revision' is null";
+
+                return null;
             }
         }
 
@@ -912,7 +904,12 @@ class WikiFile
     public function downloadData(): ?string
     {
         // Download file, or handle error
+        if (is_null($this->getUrl())) {
+            return null;
+        }
+
         $data = $this->wikimate->download($this->getUrl());
+
         if (null === $data) {
             $this->error = $this->wikimate->getError(); // Copy error if there was one
         } else {

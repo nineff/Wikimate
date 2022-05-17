@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hamstar\Wikimate;
+namespace NNS\Wikimate;
 
 /**
  * Defines Wikimate's exception for unexpected run-time errors

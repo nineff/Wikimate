@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hamstar\Wikimate;
+namespace NNS\Wikimate;
 
 use WpOrg\Requests\Session;
 
@@ -21,7 +21,8 @@ use WpOrg\Requests\Session;
  * and a finite number of retries is exhausted.  By default requests are
  * retried indefinitely.  See {@see Wikimate::request()} for more information.
  *
- * @author  Robert McLeod & Frans P. de Vries
+ * @author Robert McLeod & Frans P. de Vries
+ * @author Nikolai Neff
  *
  * @since   0.2  December 2010
  */
@@ -119,10 +120,6 @@ class Wikimate
      */
     protected ?array $error = null;
 
-    /**
-     * Whether to output debug logging.
-     */
-    protected bool $debugMode = false;
 
     /**
      * Maximum lag in seconds to accept in requests.
@@ -224,18 +221,8 @@ class Wikimate
         // Send appropriate type of request, once or multiple times
         do {
             if ($post) {
-                // Debug logging of POST requests, except for upload string
-                if ($this->debugMode && is_array($data)) {
-                    echo "$action $httptype parameters:\n";
-                    print_r($data);
-                }
                 $response = $this->session->post($this->api, $headers, $data);
             } else {
-                // Debug logging of GET requests as a query string
-                if ($this->debugMode) {
-                    echo "$action $httptype parameters:\n";
-                    echo http_build_query($data)."\n";
-                }
                 $response = $this->session->get($this->api.'?'.http_build_query($data), $headers);
             }
 
@@ -249,10 +236,6 @@ class Wikimate
                     $sleep = $this->getMaxlag();
                 }
 
-                if ($this->debugMode) {
-                    preg_match('/Waiting for [^ ]*: ([0-9.-]+) seconds? lagged/', $response->body, $match);
-                    echo "Server lagged for {$match[1]} seconds; will retry in {$sleep} seconds\n";
-                }
                 sleep($sleep);
 
                 // Check retries limit
@@ -277,13 +260,8 @@ class Wikimate
         // Check if we got a JSON result
         try {
             $result = json_decode($response->body, true, flags: JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new WikimateException("The API did not return a valid $action JSON response; {$e->getMessage()} was thrown");
-        }
-
-        if ($this->debugMode) {
-            echo "$action $httptype response:\n";
-            print_r($result);
+        } catch (\JsonException $e) {
+            throw new WikimateException("The API did not return a valid $action JSON response; '{$e->getMessage()}' was thrown");
         }
 
         return $result;
@@ -534,43 +512,6 @@ class Wikimate
     }
 
     /**
-     * Sets the debug mode.
-     *
-     * @param bool $b True to turn debugging on
-     *
-     * @return Wikimate This object
-     */
-    public function setDebugMode(bool $b): Wikimate
-    {
-        $this->debugMode = $b;
-
-        return $this;
-    }
-
-    /**
-     * Gets or prints the Requests configuration.
-     *
-     * @param bool $echo Whether to echo the session options and headers
-     *
-     * @return mixed Options array if $echo is false, or
-     *               True if options/headers have been echoed to STDOUT
-     */
-    public function debugRequestsConfig(bool $echo = false): mixed
-    {
-        if ($echo) {
-            echo "<pre>Requests options:\n";
-            print_r($this->session->options);
-            echo "Requests headers:\n";
-            print_r($this->session->headers);
-            echo '</pre>';
-
-            return true;
-        }
-
-        return $this->session->options;
-    }
-
-    /**
      * Returns a WikiPage object populated with the page data.
      *
      * @param string $title The name of the wiki article
@@ -631,11 +572,11 @@ class Wikimate
      *
      * @param array $array Array of details to be passed in the query
      *
-     * @return array|bool Decoded JSON output from the wiki API
+     * @return array|false Decoded JSON output from the wiki API
      *
      * @see https://www.mediawiki.org/wiki/Special:MyLanguage/API:Edit
      */
-    public function edit(array $array): array|bool
+    public function edit(array $array): array|false
     {
         // Obtain default token first
         if (($edittoken = $this->token()) === null) {
@@ -657,11 +598,11 @@ class Wikimate
      *
      * @param array $array Array of details to be passed in the query
      *
-     * @return array|bool Decoded JSON output from the wiki API
+     * @return array|false Decoded JSON output from the wiki API
      *
      * @see https://www.mediawiki.org/wiki/Special:MyLanguage/API:Delete
      */
-    public function delete(array $array): array|bool
+    public function delete(array $array): array|false
     {
         // Obtain default token first
         if (($deletetoken = $this->token()) === null) {
@@ -683,7 +624,7 @@ class Wikimate
      *
      * @param string $url The URL to download from
      *
-     * @return mixed The downloaded data (string), or null if error
+     * @return ?string The downloaded data (string), or null if error
      */
     public function download(string $url): ?string
     {
@@ -763,11 +704,11 @@ class Wikimate
      *
      * @param array $array Array of details to be passed in the query
      *
-     * @return array|bool Decoded JSON output from the wiki API
+     * @return array|false Decoded JSON output from the wiki API
      *
      * @see https://www.mediawiki.org/wiki/Special:MyLanguage/API:Filerevert
      */
-    public function filerevert(array $array): array|bool
+    public function filerevert(array $array): array|false
     {
         // Obtain default token first
         if (($reverttoken = $this->token()) === null) {
@@ -787,7 +728,7 @@ class Wikimate
     /**
      * Returns the latest error if there is one.
      *
-     * @return mixed The error array, or null if no error
+     * @return ?array The error array, or null if no error
      */
     public function getError(): ?array
     {
@@ -795,10 +736,10 @@ class Wikimate
     }
 
     /**
-     * determines if the session is logged in
-     * @return bool
+     * determines if the session is logged in.
      */
-    public function isLoggedIn():bool{
+    public function isLoggedIn(): bool
+    {
         return $this->loggedIn;
     }
 }

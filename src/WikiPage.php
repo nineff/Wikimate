@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Hamstar\Wikimate;
+namespace NNS\Wikimate;
+
+use stdClass;
+use UnexpectedValueException;
 
 /**
  * Models a wiki article page that can have its text altered and retrieved.
  *
- * @author  Robert McLeod & Frans P. de Vries
+ * @author Robert McLeod & Frans P. de Vries
+ * @author Nikolai Neff
  *
  * @since   0.2  December 2010
  */
@@ -29,65 +33,45 @@ class WikiPage
 
     /**
      * The title of the page.
-     *
-     * @var string|null
      */
-    protected $title = null;
+    protected string $title;
 
     /**
      * Wikimate object for API requests.
-     *
-     * @var Wikimate|null
      */
-    protected $wikimate = null;
+    protected Wikimate $wikimate;
 
     /**
      * Whether the page exists.
-     *
-     * @var bool
      */
-    protected $exists = false;
+    protected bool $exists = false;
 
     /**
      * Whether the page is invalid.
-     *
-     * @var bool
      */
-    protected $invalid = false;
+    protected bool $invalid = false;
 
     /**
      * Error array with API and WikiPage errors.
      *
      * @var array|null
      */
-    protected $error = null;
+    protected ?array $error = null;
 
     /**
      * Stores the timestamp for detection of edit conflicts.
-     *
-     * @var int|null
      */
-    protected $starttimestamp = null;
+    protected ?int $starttimestamp = null;
 
     /**
      * The complete text of the page.
-     *
-     * @var string|null
      */
-    protected $text = null;
+    protected ?string $text = null;
 
     /**
      * The sections object for the page.
-     *
-     * @var stdClass|null
      */
-    protected $sections = null;
-
-    /*
-     *
-     * Magic methods
-     *
-     */
+    protected stdClass $sections;
 
     /**
      * Constructs a WikiPage object from the title given
@@ -96,11 +80,11 @@ class WikiPage
      * @param string   $title    Name of the wiki article
      * @param Wikimate $wikimate Wikimate object
      */
-    public function __construct($title, $wikimate)
+    public function __construct(string $title, Wikimate $wikimate)
     {
         $this->wikimate = $wikimate;
         $this->title = $title;
-        $this->sections = new \stdClass();
+        $this->sections = new stdClass();
         $this->text = $this->getText(true);
 
         if ($this->invalid) {
@@ -109,28 +93,13 @@ class WikiPage
     }
 
     /**
-     * Forgets all object properties.
-     */
-    public function __destruct()
-    {
-        $this->title = null;
-        $this->wikimate = null;
-        $this->exists = false;
-        $this->invalid = false;
-        $this->error = null;
-        $this->starttimestamp = null;
-        $this->text = null;
-        $this->sections = null;
-    }
-
-    /**
      * Returns the wikicode of the page.
      *
      * @return string String of wikicode
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
     /**
@@ -144,7 +113,7 @@ class WikiPage
      *
      * @return array Array of sections
      */
-    public function __invoke()
+    public function __invoke(): array
     {
         return $this->getAllSections(false, self::SECTIONLIST_BY_NAME);
     }
@@ -154,33 +123,17 @@ class WikiPage
      *
      * @return bool True if page exists
      */
-    public function exists()
+    public function exists(): bool
     {
         return $this->exists;
     }
 
     /**
-     * Alias of self::__destruct().
-     *
-     * @return void
-     */
-    public function destroy()
-    {
-        $this->__destruct();
-    }
-
-    /*
-     *
-     * Page meta methods
-     *
-     */
-
-    /**
      * Returns the latest error if there is one.
      *
-     * @return mixed The error array, or null if no error
+     * @return ?array The error array, or null if no error
      */
-    public function getError()
+    public function getError(): ?array
     {
         return $this->error;
     }
@@ -190,7 +143,7 @@ class WikiPage
      *
      * @return string The title of this page
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -200,7 +153,7 @@ class WikiPage
      *
      * @return int The number of sections in this page
      */
-    public function getNumSections()
+    public function getNumSections(): int
     {
         return count($this->sections->byIndex);
     }
@@ -210,16 +163,10 @@ class WikiPage
      *
      * @return stdClass Section class
      */
-    public function getSectionOffsets()
+    public function getSectionOffsets(): ?stdClass
     {
         return $this->sections;
     }
-
-    /*
-     *
-     * Getter methods
-     *
-     */
 
     /**
      * Gets the text of the page. If refresh is true,
@@ -227,9 +174,9 @@ class WikiPage
      *
      * @param bool $refresh True to query the wiki API again
      *
-     * @return mixed The text of the page (string), or null if error
+     * @return ?string The text of the page (string), or null if error
      */
-    public function getText($refresh = false)
+    public function getText(bool $refresh = false): ?string
     {
         if ($refresh) { // We want to query the API
             // Specify relevant page properties to retrieve
@@ -353,16 +300,16 @@ class WikiPage
      * - section name (string, e.g. "History")
      * - section index (int, e.g. 3)
      *
-     * @param mixed $section            The section to get
-     * @param bool  $includeHeading     False to get section text only,
-     *                                  true to include heading too
-     * @param bool  $includeSubsections False to get section text only,
-     *                                  true to include subsections too
+     * @param int|string $section            The section to get
+     * @param bool       $includeHeading     False to get section text only,
+     *                                       true to include heading too
+     * @param bool       $includeSubsections False to get section text only,
+     *                                       true to include subsections too
      *
-     * @return mixed Wikitext of the section on the page,
-     *               or null if section is undefined
+     * @return ?string Wikitext of the section on the page,
+     *                 or null if section is undefined
      */
-    public function getSection($section, $includeHeading = false, $includeSubsections = true)
+    public function getSection(string|int $section, bool $includeHeading = false, bool $includeSubsections = true): ?string
     {
         // Check if we have a section name or index
         if (is_int($section)) {
@@ -370,17 +317,15 @@ class WikiPage
                 return null;
             }
             $coords = $this->sections->byIndex[$section];
-        } elseif (is_string($section)) {
+        } else {
             if (!isset($this->sections->byName[$section])) {
                 return null;
             }
             $coords = $this->sections->byName[$section];
-        } else {
-            $coords = [];
         }
 
         // Extract the offset, depth and (initial) length
-        @extract($coords);
+        extract($coords); //ToDo: Fix me and don't use extract
         // Find subsections if requested, and not the intro
         if ($includeSubsections && $offset > 0) {
             $found = false;
@@ -423,9 +368,10 @@ class WikiPage
      * @param int  $keyNames       Modifier for the array key names
      *
      * @return array Array of sections
-     * @throw   UnexpectedValueException  If $keyNames is not a supported constant
+     *
+     * @throws UnexpectedValueException If $keyNames is not a supported constant
      */
-    public function getAllSections($includeHeading = false, $keyNames = self::SECTIONLIST_BY_INDEX)
+    public function getAllSections(bool $includeHeading = false, int $keyNames = self::SECTIONLIST_BY_INDEX): array
     {
         $sections = [];
 
@@ -437,7 +383,7 @@ class WikiPage
                 $array = array_keys($this->sections->byName);
                 break;
             default:
-                throw new \UnexpectedValueException('Unexpected keyNames parameter '."($keyNames) passed to WikiPage::getAllSections()");
+                throw new UnexpectedValueException("Unexpected keyNames parameter ($keyNames) passed to WikiPage::getAllSections()");
         }
 
         foreach ($array as $key) {
@@ -446,12 +392,6 @@ class WikiPage
 
         return $sections;
     }
-
-    /*
-     *
-     * Setter methods
-     *
-     */
 
     /**
      * Sets the text in the page.  Updates the starttimestamp to the timestamp
@@ -463,15 +403,15 @@ class WikiPage
      * - a new section (the string "new")
      * - the whole page (null)
      *
-     * @param string $text    The article text
-     * @param string $section The section to edit (whole page by default)
-     * @param bool   $minor   True for minor edit
-     * @param string $summary Summary text, and section header in case
-     *                        of new section
+     * @param string          $text    The article text
+     * @param int|string|null $section The section to edit (whole page by default)
+     * @param bool            $minor   True for minor edit
+     * @param ?string         $summary Summary text, and section header in case
+     *                                 of new section
      *
      * @return bool True if page was edited successfully
      */
-    public function setText($text, $section = null, $minor = false, $summary = null)
+    public function setText(string $text, int|string|null $section = null, bool $minor = false, ?string $summary = null): bool
     {
         $data = [
             'title' => $this->title,
@@ -562,15 +502,15 @@ class WikiPage
      * - a new section (the string "new")
      * - the whole page (null)
      *
-     * @param string $text    The text of the section
-     * @param mixed  $section The section to edit (intro by default)
-     * @param string $summary Summary text, and section header in case
-     *                        of new section
-     * @param bool   $minor   True for minor edit
+     * @param string     $text    The text of the section
+     * @param int|string $section The section to edit
+     * @param string     $summary Summary text, and section header in case
+     *                            of new section
+     * @param bool       $minor   True for minor edit
      *
      * @return bool True if the section was saved
      */
-    public function setSection($text, $section = 0, $summary = null, $minor = false)
+    public function setSection(string $text, int|string $section, ?string $summary = null, bool $minor = false): bool
     {
         return $this->setText($text, $section, $minor, $summary);
     }
@@ -583,7 +523,7 @@ class WikiPage
      *
      * @return bool True if the section was saved
      */
-    public function newSection($name, $text)
+    public function newSection(string $name, string $text): bool
     {
         return $this->setSection($text, 'new', $name, false);
     }
@@ -595,7 +535,7 @@ class WikiPage
      *
      * @return bool True if page was deleted successfully
      */
-    public function delete($reason = null)
+    public function delete(?string $reason = null): bool
     {
         $data = [
             'title' => $this->title,
@@ -622,21 +562,15 @@ class WikiPage
         return false;
     }
 
-    /*
-     *
-     * Private methods
-     *
-     */
-
     /**
      * Finds a section's index by name.
      * If a section index or 'new' is passed, it is returned directly.
      *
-     * @param mixed $section The section name or index to find
+     * @param int|string $section The section name or index to find
      *
      * @return mixed The section index, or -1 if not found
      */
-    private function findSection($section)
+    private function findSection(int|string $section): mixed
     {
         // Check section type
         if (is_int($section) || 'new' === $section) {
