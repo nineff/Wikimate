@@ -208,7 +208,7 @@ class WikiPage
                 return null;
             }
 
-            $this->starttimestamp = $r['curtimestamp'];
+            $this->starttimestamp = (int) $r['curtimestamp'];
             unset($r, $data);
 
             if (!isset($page['missing'])) {
@@ -220,7 +220,11 @@ class WikiPage
             unset($page);
 
             // Now we need to get the section headers, if any
-            preg_match_all('/(={1,6}).*?\1 *(?:\n|$)/', $this->text, $matches);
+            if (is_null($this->text)){
+                return null;
+            } else {
+                preg_match_all('/(={1,6}).*?\1 *(?:\n|$)/', $this->text, $matches);
+            }
 
             // Set the intro section (between title and first section)
             $this->sections->byIndex[0]['offset'] = 0;
@@ -471,7 +475,7 @@ class WikiPage
                 $this->error = null; // Reset the error status
             }
 
-            $this->starttimestamp = $r['curtimestamp']; // Update the starttimestamp
+            $this->starttimestamp = (int) $r['curtimestamp']; // Update the starttimestamp
 
             return true;
         }

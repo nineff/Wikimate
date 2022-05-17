@@ -1,6 +1,10 @@
 <?php
 
-include 'globals.php';
+use NNS\Wikimate\Wikimate;
+
+require __DIR__.'/vendor/autoload.php';
+
+//todo: new Example
 
 $api_url = 'http://localhost/mediawiki/api.php';
 echo "Connecting to: $api_url\n";
@@ -12,14 +16,13 @@ echo "Enter your password: ";
 $password = trim(fread(STDIN, 100));
 
 $wiki = new Wikimate($api_url);
-#$wiki->setDebugMode(TRUE);
 
 echo "Attempting to log in . . . ";
 if ($wiki->login($username, $password)) {
 	echo "Success.\n";
 } else {
 	$error = $wiki->getError();
-	echo "\nWikimate error: ".$error['login']."\n";
+	echo "\nWikimate error: ".$error['login']."\n"; //ToDo: handle undefined on empty username
 	exit(1);
 }
 
@@ -36,7 +39,7 @@ if (!$page->exists() ) {
 	$pagetext .= "\n== Veggie ==\n";
 	$pagetext .= "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\n";
 	// store page and check for error
-	if ($page->setText($pagetext, null, false, 'Create initial page')) {
+	if ($page->setText($pagetext, null, false, 'Create initial page')) { //ToDo: handle creating deleted page
 		echo "\n'Sausages' created.\n";
 	} else {
 		$error = $page->getError();
