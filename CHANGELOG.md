@@ -5,12 +5,13 @@ This page lists the changes that were done in each version of Wikimate.
 Since v0.10.0 this project adheres to [Semantic Versioning](http://semver.org/)
 and [Keep a Changelog](http://keepachangelog.com/).
 
-## Version 2.0.0 - 2022-MM-DD
+## Version 2.0.0 - 2022-MM-DD (Unreleased)
 
 ### Changed
 
 - **Breaking:** Require minimum PHP Verion 8.0
 - **Breaking:** Added Namespace and adhere to PSR-4 autoloading Standard
+- includes unreleased Changes from original Project (https://github.com/hamstar/wikimate):
 - Applied code formatting rules from [PSR-12](https://www.php-fig.org/psr/psr-12/) ([#142])
 - Resolved static analysis warnings reported by [PHPStan](https://phpstan.org/) &
   [PHPMD](https://phpmd.org/) ([#143])
@@ -22,6 +23,10 @@ and [Keep a Changelog](http://keepachangelog.com/).
 
 - Removed Wikipage::Destroy()
 - Removed Wikimate::setDebugMode and Wikimate::debugRequestsConfig()
+
+### Fixed
+
+- Fixed example not using correct array key for invalid login errors
 
 ## Version 1.0.0 - 2021-09-05
 
@@ -177,65 +182,3 @@ and may require changes in applications that invoke these methods:_
 ## Version 0.3 - 2010-12-26
 
 - Initial commit
-
-[#25]: https://github.com/hamstar/Wikimate/pull/25
-[#28]: https://github.com/hamstar/Wikimate/pull/28
-[#30]: https://github.com/hamstar/Wikimate/pull/30
-[#32]: https://github.com/hamstar/Wikimate/pull/32
-[#33]: https://github.com/hamstar/Wikimate/pull/33
-[#34]: https://github.com/hamstar/Wikimate/pull/34
-[#37]: https://github.com/hamstar/Wikimate/pull/37
-[#41]: https://github.com/hamstar/Wikimate/pull/41
-[#43]: https://github.com/hamstar/Wikimate/pull/43
-[#45]: https://github.com/hamstar/Wikimate/pull/45
-[#47]: https://github.com/hamstar/Wikimate/pull/47
-[#49]: https://github.com/hamstar/Wikimate/pull/49
-[#50]: https://github.com/hamstar/Wikimate/pull/50
-[#52]: https://github.com/hamstar/Wikimate/pull/52
-[#55]: https://github.com/hamstar/Wikimate/pull/55
-[#57]: https://github.com/hamstar/Wikimate/pull/57
-[#61]: https://github.com/hamstar/Wikimate/pull/61
-[#63]: https://github.com/hamstar/Wikimate/pull/63
-[#64]: https://github.com/hamstar/Wikimate/pull/64
-[#67]: https://github.com/hamstar/Wikimate/pull/67
-[#69]: https://github.com/hamstar/Wikimate/pull/69
-[#71]: https://github.com/hamstar/Wikimate/pull/71
-[#76]: https://github.com/hamstar/Wikimate/pull/76
-[#78]: https://github.com/hamstar/Wikimate/pull/78
-[#80]: https://github.com/hamstar/Wikimate/pull/80
-[#83]: https://github.com/hamstar/Wikimate/pull/83
-[#85]: https://github.com/hamstar/Wikimate/pull/85
-[#100]: https://github.com/hamstar/Wikimate/pull/100
-[#101]: https://github.com/hamstar/Wikimate/pull/101
-[#105]: https://github.com/hamstar/Wikimate/pull/105
-[#106]: https://github.com/hamstar/Wikimate/pull/106
-[#107]: https://github.com/hamstar/Wikimate/pull/107
-[#108]: https://github.com/hamstar/Wikimate/pull/108
-[#109]: https://github.com/hamstar/Wikimate/pull/109
-[#111]: https://github.com/hamstar/Wikimate/pull/111
-[#112]: https://github.com/hamstar/Wikimate/pull/112
-[#114]: https://github.com/hamstar/Wikimate/pull/114
-[#118]: https://github.com/hamstar/Wikimate/pull/118
-[#121]: https://github.com/hamstar/Wikimate/pull/121
-[#122]: https://github.com/hamstar/Wikimate/pull/122
-[#123]: https://github.com/hamstar/Wikimate/pull/123
-[#124]: https://github.com/hamstar/Wikimate/pull/124
-[#125]: https://github.com/hamstar/Wikimate/pull/125
-[#127]: https://github.com/hamstar/Wikimate/pull/127
-[#128]: https://github.com/hamstar/Wikimate/pull/128
-[#129]: https://github.com/hamstar/Wikimate/pull/129
-[#130]: https://github.com/hamstar/Wikimate/pull/130
-[#131]: https://github.com/hamstar/Wikimate/pull/131
-[#132]: https://github.com/hamstar/Wikimate/pull/132
-[#133]: https://github.com/hamstar/Wikimate/pull/133
-[#134]: https://github.com/hamstar/Wikimate/pull/134
-[#135]: https://github.com/hamstar/Wikimate/pull/135
-[#136]: https://github.com/hamstar/Wikimate/pull/136
-[#138]: https://github.com/hamstar/Wikimate/pull/138
-[#139]: https://github.com/hamstar/Wikimate/pull/139
-[#140]: https://github.com/hamstar/Wikimate/pull/140
-[#142]: https://github.com/hamstar/Wikimate/pull/142
-[#143]: https://github.com/hamstar/Wikimate/pull/143
-[#145]: https://github.com/hamstar/Wikimate/pull/145
-[#146]: https://github.com/hamstar/Wikimate/pull/146
-[#147]: https://github.com/hamstar/Wikimate/pull/147

@@ -174,7 +174,7 @@ class Wikimate
      */
     protected function initRequests(): void
     {
-        $this->useragent = 'Wikimate/'.self::VERSION.' (https://github.com/hamstar/Wikimate)';
+        $this->useragent = 'Wikimate/'.self::VERSION.' (https://github.com/nineff/Wikimate)';
 
         $this->session = new Session($this->api, $this->headers, $this->data, $this->options);
         $this->session->useragent = $this->useragent;

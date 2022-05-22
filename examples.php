@@ -22,7 +22,7 @@ if ($wiki->login($username, $password)) {
 	echo "Success.\n";
 } else {
 	$error = $wiki->getError();
-	echo "\nWikimate error: ".$error['login']."\n"; //ToDo: handle undefined on empty username
+	echo "\nWikimate error: ".$error['auth']."\n";
 	exit(1);
 }
 
